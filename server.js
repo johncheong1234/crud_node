@@ -3,6 +3,13 @@ const cors = require("cors");
 
 const app = express();
 
+const initial = [
+  {username: 'john',type: 'learner',password: 'john',firstname: 'john'},
+  {username: 'anne',type: 'learner',password: 'anne',firstname: 'anne'},
+  {username: 'tom',type: 'trainer',password: 'tom',firstname: 'tom'},
+  {username: 'bob',type: 'trainer',password: 'bob',firstname: 'bob'},
+]
+
 var corsOptions = {
   origin: "http://localhost:8081"
 };
@@ -16,7 +23,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require("./app/models");
+const { users } = require("./app/models");
 db.sequelize.sync({ force: true }).then(() => {
+  for(var i=0; i<initial.length;i++){
+    users.create(initial[i])
+  }
     console.log("Drop and re-sync db.");
   });
 
