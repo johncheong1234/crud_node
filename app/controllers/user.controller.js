@@ -54,7 +54,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
   
-    user.findByPk(id)
+    users.findByPk(id)
       .then(data => {
         res.send(data);
       })
