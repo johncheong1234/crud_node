@@ -1,11 +1,11 @@
 const db = require("../models");
-const user = db.users;
+const users = db.users;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new user
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.title) {
+    if (!req.body.username) {
       res.status(400).send({
         message: "Content can not be empty!"
       });
@@ -14,13 +14,14 @@ exports.create = (req, res) => {
   
     // Create a user
     const user = {
-      title: req.body.title,
-      description: req.body.description,
-      published: req.body.published ? req.body.published : false
+      username: req.body.username,
+      password: req.body.password,
+      type: req.body.type,
+      firstname: req.body.firstname
     };
   
     // Save user in the database
-    user.create(user)
+    users.create(user, { fields: ['username', 'password','type','firstname'] })
       .then(data => {
         res.send(data);
       })
@@ -37,7 +38,7 @@ exports.findAll = (req, res) => {
     const title = req.query.title;
     var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
   
-    user.findAll({ where: condition })
+    users.findAll({ where: condition })
       .then(data => {
         res.send(data);
       })
