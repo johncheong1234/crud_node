@@ -1,146 +1,148 @@
 const db = require("../models");
-const Tutorial = db.tutorials;
+const users = db.users;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Tutorial
+// Create and Save a new user
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.title) {
+    if (!req.body.username) {
       res.status(400).send({
         message: "Content can not be empty!"
       });
       return;
     }
   
-    // Create a Tutorial
-    const tutorial = {
-      title: req.body.title,
-      description: req.body.description,
-      published: req.body.published ? req.body.published : false
+    // Create a user
+    const user = {
+      username: req.body.username,
+      password: req.body.password,
+      type: req.body.type,
+      firstname: req.body.firstname
     };
   
-    // Save Tutorial in the database
-    Tutorial.create(tutorial)
+    // Save user in the database
+    users.create(user, { fields: ['username', 'password','type','firstname'] })
       .then(data => {
         res.send(data);
       })
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while creating the Tutorial."
+            err.message || "Some error occurred while creating the user."
         });
       });
   };
 
-// Retrieve all Tutorials from the database.
+// Retrieve all users from the database.
 exports.findAll = (req, res) => {
-    const title = req.query.title;
-    var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
+    var username = req.body.username;
+    console.log(username);
+    var condition = username ? { username: { [Op.like]: `%${username}%` } } : null;
   
-    Tutorial.findAll({ where: condition })
+    users.findAll({ where: condition })
       .then(data => {
         res.send(data);
       })
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving tutorials."
+            err.message || "Some error occurred while retrieving users."
         });
       });
   };
 
-// Find a single Tutorial with an id
+// Find a single user with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
   
-    Tutorial.findByPk(id)
+    users.findByPk(id)
       .then(data => {
         res.send(data);
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error retrieving Tutorial with id=" + id
+          message: "Error retrieving user with id=" + id
         });
       });
   };
 
-// Update a Tutorial by the id in the request
+// Update a user by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
   
-    Tutorial.update(req.body, {
+    user.update(req.body, {
       where: { id: id }
     })
       .then(num => {
         if (num == 1) {
           res.send({
-            message: "Tutorial was updated successfully."
+            message: "user was updated successfully."
           });
         } else {
           res.send({
-            message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`
+            message: `Cannot update user with id=${id}. Maybe user was not found or req.body is empty!`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error updating Tutorial with id=" + id
+          message: "Error updating user with id=" + id
         });
       });
   };
 
-// Delete a Tutorial with the specified id in the request
+// Delete a user with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
   
-    Tutorial.destroy({
+    user.destroy({
       where: { id: id }
     })
       .then(num => {
         if (num == 1) {
           res.send({
-            message: "Tutorial was deleted successfully!"
+            message: "user was deleted successfully!"
           });
         } else {
           res.send({
-            message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
+            message: `Cannot delete user with id=${id}. Maybe user was not found!`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Could not delete Tutorial with id=" + id
+          message: "Could not delete user with id=" + id
         });
       });
   };
 
-// Delete all Tutorials from the database.
+// Delete all users from the database.
 exports.deleteAll = (req, res) => {
-    Tutorial.destroy({
+    user.destroy({
       where: {},
       truncate: false
     })
       .then(nums => {
-        res.send({ message: `${nums} Tutorials were deleted successfully!` });
+        res.send({ message: `${nums} users were deleted successfully!` });
       })
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while removing all tutorials."
+            err.message || "Some error occurred while removing all users."
         });
       });
   };
 
-// Find all published Tutorials
+// Find all published users
 exports.findAllPublished = (req, res) => {
-    Tutorial.findAll({ where: { published: true } })
+    user.findAll({ where: { published: true } })
       .then(data => {
         res.send(data);
       })
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving tutorials."
+            err.message || "Some error occurred while retrieving users."
         });
       });
   };
